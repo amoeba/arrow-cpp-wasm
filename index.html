@@ -1,0 +1,10 @@
+<script src="./a.out.js"></script>
+<script>
+  Module.onRuntimeInitialized = async () => {
+    const api = {
+      main: Module.cwrap("main", "number", []),
+    };
+
+    console.log(api.main());
+  };
+</script>
