@@ -1,6 +1,6 @@
 # arrow-cpp-wasm
 
-Basic example of runningn Arrow C++ under WASM.
+Basic example of running Arrow C++ under WASM.
 
 ## Pre-requisites
 
