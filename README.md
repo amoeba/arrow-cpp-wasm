@@ -14,6 +14,31 @@ Basic example of running Arrow C++ under WASM.
 
 - git
 - emsdk
+- A WASM-compatible build of Arrow C++
+
+## Building Arrow for WASM
+
+See <https://arrow.apache.org/docs/developers/cpp/emscripten.html>.
+
+The following CMake preset is what I'm currently using but this can probably be removed once I fix build.sh to pass the right flags.
+
+```json
+{
+  "name": "user",
+  "description": "",
+  "displayName": "",
+  "inherits": [
+    "features-emscripten"
+  ],
+  "cacheVariables": {
+    "ARROW_WITH_SNAPPY": "OFF",
+    "ARROW_SUBSTRAIT": "OFF",
+    "ARROW_WITH_BROTLI": "OFF",
+    "ARROW_ORC": "OFF",
+    "ARROW_ACERO": "OFF"
+  }
+}
+```
 
 ## Running
 
