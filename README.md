@@ -24,12 +24,11 @@ The following CMake preset is what I'm currently using but this can probably be 
 
 ```json
 {
-  "name": "user",
-  "description": "",
-  "displayName": "",
+  "name": "ninja-release-emscripten-user",
   "inherits": [
-    "features-emscripten"
+    "ninja-release-emscripten"
   ],
+  "displayName": "ninja-release-emscripten-user",
   "cacheVariables": {
     "ARROW_WITH_SNAPPY": "OFF",
     "ARROW_SUBSTRAIT": "OFF",
@@ -37,7 +36,7 @@ The following CMake preset is what I'm currently using but this can probably be 
     "ARROW_ORC": "OFF",
     "ARROW_ACERO": "OFF"
   }
-}
+},
 ```
 
 ## Running

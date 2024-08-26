@@ -1,3 +1,8 @@
+<div>
+  <label for="f">Choose file:</label>
+  <input id="f" type="file" />
+</div>
+
 <script src="./a.out.js"></script>
 <script>
   Module.onRuntimeInitialized = async () => {
@@ -7,4 +12,26 @@
 
     console.log(api.main());
   };
+
+  document.getElementById('f').addEventListener('change', function(e) {
+    if (!e.target.files[0]) {
+      console.log("error, files array is empty...", e.target.files)
+      return;
+    }
+
+    console.log("handling file...")
+    var file = e.target.files[0];
+    var fr = new FileReader();
+
+    fr.onload = function () {
+      var data = new Uint8Array(fr.result);
+
+      Module['FS_createDataFile']('/', 'filename', data, true, true, true);
+      Module.ccall('main', null, [], null);
+
+      e.target.value = '';
+  };
+  fr.readAsArrayBuffer(file);
+
+  });
 </script>
