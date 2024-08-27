@@ -13,7 +13,7 @@
 #include <parquet/arrow/reader.h>
 #include <parquet/arrow/writer.h>
 
-std::string ProcessFile(std::string filename) {
+std::string InspectFile(std::string filename) {
   auto open_result =
       arrow::io::ReadableFile::Open(filename, arrow::default_memory_pool());
 
@@ -47,5 +47,5 @@ std::string ProcessFile(std::string filename) {
 }
 
 EMSCRIPTEN_BINDINGS(my_module) {
-  emscripten::function("ProcessFile", &ProcessFile);
+  emscripten::function("InspectFile", &InspectFile);
 }

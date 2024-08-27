@@ -1,6 +1,6 @@
 <div>
-  <label for="f">Choose file:</label>
-  <input id="f" type="file" />
+  <label for="file_input">Choose file:</label>
+  <input id="file_input" type="file" />
 </div>
 
 <script src="./a.out.js"></script>
@@ -9,33 +9,30 @@
     console.log("onRuntimeInitialized called");
   };
 
-  document.getElementById('f').addEventListener('change', function(e) {
+  document.getElementById('file_input').addEventListener('change', function (e) {
     if (!e.target.files[0]) {
       console.log("error, files array is empty...", e.target.files)
+
       return;
     }
 
-    console.log("handling file...")
     var file = e.target.files[0];
 
+    var fr = new FileReader()
 
-     var fr = new FileReader()
+    fr.onload = function () {
+      var data = new Uint8Array(fr.result);
 
-     fr.onload = function () {
-       var data = new Uint8Array(fr.result);
+      let filename = 'tmp.arrow';
+      let stream = FS.open(filename, 'w+');
+      FS.write(stream, data, 0, data.length, 0);
+      FS.close(stream);
 
-       let filename = 'tmp.arrow';
-       let stream = FS.open(filename, 'w+');
-       FS.write(stream, data, 0, data.length, 0);
-       FS.close(stream);
-//       Module['FS_createDataFile']('/', 'filename', data, true, true, true);
-//       Module.ccall('main', null, [], null);
-console.log("hi", Module);
-console.log("hi", Module.ProcessFile(filename));
+      console.log("InspectFile:", Module.InspectFile(filename));
 
-       e.target.value = '';
-   };
-   fr.readAsArrayBuffer(file);
+      e.target.value = '';
+    };
 
+    fr.readAsArrayBuffer(file);
   });
 </script>
