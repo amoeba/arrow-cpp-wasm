@@ -4,11 +4,14 @@ Basic example of running Arrow C++ under WASM.
 
 ## Roadmap for main.cc
 
-- [x] Create and use a Status object
-- [x] Create an Array
-- [ ] Create an Array from user input
-- [ ] Call a compute kernel on that Array
-- [ ] Show result to user
+- Compute example
+  - [x] Create and use a Status object
+  - [x] Create an Array
+  - [ ] Create an Array from user input
+  - [ ] Call a compute kernel on that Array
+  - [ ] Show result to user
+- Inspect Arrow IPC files
+  - [x] Open a file and print schema
 
 ## Pre-requisites
 
