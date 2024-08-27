@@ -1,18 +1,51 @@
 #include <fstream>
+#include <memory>
 
 #include "emscripten.h"
 #include "emscripten/bind.h"
 
 #include <arrow/api.h>
+#include <arrow/compute/api.h>
 #include <arrow/csv/api.h>
 #include <arrow/io/api.h>
 #include <arrow/ipc/api.h>
 #include <arrow/result.h>
 #include <arrow/status.h>
 #include <arrow/type.h>
-#include <parquet/arrow/reader.h>
-#include <parquet/arrow/writer.h>
+#include <arrow/array/array_base.h>
 
+arrow::Result<std::shared_ptr<arrow::Array>> BuildArray(int a, int b, int c, int d, int e) {
+  std::shared_ptr<arrow::Array> arr;
+
+  arrow::Int32Builder builder;
+  ARROW_RETURN_NOT_OK(builder.Append(a));
+  ARROW_RETURN_NOT_OK(builder.Append(b));
+  ARROW_RETURN_NOT_OK(builder.Append(c));
+  ARROW_RETURN_NOT_OK(builder.Append(d));
+  ARROW_RETURN_NOT_OK(builder.Append(e));
+
+  ARROW_ASSIGN_OR_RAISE(arr, builder.Finish())
+
+  return arr;
+}
+
+std::string Crunch(int a, int b, int c, int d, int e) {
+  auto answer = BuildArray(a, b, c, d, e);
+
+  if (!answer.ok()) {
+    return answer.status().message();
+  }
+
+  auto sum = arrow::compute::Sum({answer.ValueUnsafe()});
+
+  if (!sum.ok()) {
+    return answer.status().message();
+  }
+
+  return sum.ValueUnsafe().ToString();
+}
+
+// TODO: Wrap in Result/Status and use macros to simplify
 std::string InspectFile(std::string filename) {
   auto open_result =
       arrow::io::ReadableFile::Open(filename, arrow::default_memory_pool());
@@ -47,5 +80,6 @@ std::string InspectFile(std::string filename) {
 }
 
 EMSCRIPTEN_BINDINGS(my_module) {
+  emscripten::function("Crunch", &Crunch);
   emscripten::function("InspectFile", &InspectFile);
 }

@@ -1,13 +1,76 @@
-<div>
-  <label for="file_input">Choose file:</label>
-  <input id="file_input" type="file" />
-</div>
+<section>
+  <h1>Arrow C++ WASM Demos</h1>
+  <p>
+    Source: <a href="https://github.com/amoeba/arrow-cpp-wasm">https://github.com/amoeba/arrow-cpp-wasm</a>
+</p>
+</section>
+
+<section>
+  <h2>1. Crunch Some Numbers</h2>
+  <p>Choose some numbers below and choose a compute function to run on them.</p>
+  <p>
+    1. Pick some numbers:
+    <ul>
+    <li><input id="number_one" type="number" size="4" value="1" /></li>
+    <li><input id="number_two" type="number" size="4" value="2" /></li>
+    <li><input id="number_three" type="number" size="4" value="3" /></li>
+    <li><input id="number_four" type="number" size="4" value="4" /></li>
+    <li><input id="number_five" type="number" size="4" value="5" /></li>
+    </ul>
+  </p>
+  <p>
+    2. Pick a compute function:
+    <select>
+      <option>sum</option>
+    </select>
+  </p>
+  <p>
+    <button id="crunch">3. Crunch!</button>
+  </p>
+  <p>
+    <textarea id="result_one" rows="12" cols="40">Result will go here...</textarea>
+  </p>
+</section>
+
+
+<section>
+  <h2>2. Echo Arrow IPC Schema</h2>
+  <p>Choose a file from your computer and, if it's an Arrow IPC file, its schema will be echoed below.</p>
+  <p>
+    <div>
+      <label for="file_input">Choose file:</label>
+      <input id="file_input" type="file" />
+    </div>
+  </p>
+  <p>
+    <textarea id="result_two" rows="12" cols="40">Result will go here...</textarea>
+  </p>
+</section>
 
 <script src="./a.out.js"></script>
 <script>
   Module.onRuntimeInitialized = async () => {
     console.log("onRuntimeInitialized called");
   };
+
+
+  // Demo One Setup
+  var demo_one_result = document.getElementById("result_one");
+  document.getElementById('crunch').addEventListener('click', function (e) {
+    var crunch_result = Module.Crunch(
+      Number(document.getElementById("number_one").value),
+      Number(document.getElementById("number_two").value),
+      Number(document.getElementById("number_three").value),
+      Number(document.getElementById("number_four").value),
+      Number(document.getElementById("number_five").value)
+    );
+
+    console.log("Crunch(): ", crunch_result);
+    demo_one_result.innerHTML = crunch_result
+  });
+
+  // Demo Two Setup
+  var demo_two_result = document.getElementById("result_two");
 
   document.getElementById('file_input').addEventListener('change', function (e) {
     if (!e.target.files[0]) {
@@ -17,7 +80,6 @@
     }
 
     var file = e.target.files[0];
-
     var fr = new FileReader()
 
     fr.onload = function () {
@@ -28,7 +90,10 @@
       FS.write(stream, data, 0, data.length, 0);
       FS.close(stream);
 
-      console.log("InspectFile:", Module.InspectFile(filename));
+      var inspect_result = Module.InspectFile(filename);
+      console.log("InspectFile: ", inspect_result);
+
+      demo_two_result.innerHTML = inspect_result;
 
       e.target.value = '';
     };

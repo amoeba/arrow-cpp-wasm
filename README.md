@@ -7,11 +7,12 @@ Basic example of running Arrow C++ under WASM.
 - Compute example
   - [x] Create and use a Status object
   - [x] Create an Array
-  - [ ] Create an Array from user input
-  - [ ] Call a compute kernel on that Array
-  - [ ] Show result to user
+  - [x] Create an Array from user input
+  - [x] Call a compute kernel on that Array
+  - [x] Show result to user
 - Inspect Arrow IPC files
   - [x] Open a file and print schema
+- Your idea here..
 
 ## Pre-requisites
 
@@ -23,25 +24,6 @@ Basic example of running Arrow C++ under WASM.
 
 See <https://arrow.apache.org/docs/developers/cpp/emscripten.html>.
 
-The following CMake preset is what I'm currently using but this can probably be removed once I fix build.sh to pass the right flags.
-
-```json
-{
-  "name": "ninja-release-emscripten-user",
-  "inherits": [
-    "ninja-release-emscripten"
-  ],
-  "displayName": "ninja-release-emscripten-user",
-  "cacheVariables": {
-    "ARROW_WITH_SNAPPY": "OFF",
-    "ARROW_SUBSTRAIT": "OFF",
-    "ARROW_WITH_BROTLI": "OFF",
-    "ARROW_ORC": "OFF",
-    "ARROW_ACERO": "OFF"
-  }
-},
-```
-
 ## Running
 
 ```sh
@@ -49,5 +31,4 @@ source emsdk/emsdk_env.sh
 sh build.sh
 ```
 
-When you open a web browser capable of running WASM binaries, you should see "0"
-printed to the developer console.
+Now open index.html in a web browser.
