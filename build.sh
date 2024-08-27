@@ -10,10 +10,9 @@ fi
 
 # TODO: This is very much hardcoded and could be made way better
 emcc -O3 -s WASM=1 \
-  -s EXPORTED_RUNTIME_METHODS='["cwrap"]' \
-  -s EXPORTED_FUNCTIONS=_main \
   -s FORCE_FILESYSTEM=1 \
   -I"$EMSDK"/upstream/emscripten/cache/sysroot/include/arrow/ \
   -L"$EMSDK"/upstream/emscripten/cache/sysroot/lib/ \
   -larrow \
+  -lembind \
   main.cc

@@ -1,36 +1,51 @@
-#include "arrow/io/file.h"
-#include "arrow/io/interfaces.h"
+#include <fstream>
+
 #include "emscripten.h"
+#include "emscripten/bind.h"
 
 #include <arrow/api.h>
+#include <arrow/csv/api.h>
+#include <arrow/io/api.h>
+#include <arrow/ipc/api.h>
+#include <arrow/result.h>
 #include <arrow/status.h>
-#include <arrow/ipc/reader.h>
+#include <arrow/type.h>
+#include <parquet/arrow/reader.h>
+#include <parquet/arrow/writer.h>
 
-arrow::Status RunMain() {
-  // arrow::Int32Builder builder;
+std::string ProcessFile(std::string filename) {
+  auto open_result =
+      arrow::io::ReadableFile::Open(filename, arrow::default_memory_pool());
 
-  // ARROW_RETURN_NOT_OK(builder.Append(1));
-  // ARROW_RETURN_NOT_OK(builder.Append(2));
-  // ARROW_RETURN_NOT_OK(builder.Append(3));
-  // ARROW_ASSIGN_OR_RAISE(std::shared_ptr<arrow::Array> arr, builder.Finish())
+  if (!open_result.ok()) {
+    return "Failed to open file: " + filename + " with error " +
+           open_result.status().message();
+  }
 
-  // ***
-  std::shared_ptr<arrow::io::RandomAccessFile> input;
-  ARROW_ASSIGN_OR_RAISE(input, arrow::io::ReadableFile::Open("foo.arrow"));
-  auto read_options = arrow::ipc::IpcReadOptions::Defaults();
-  ARROW_ASSIGN_OR_RAISE(auto reader, arrow::ipc::RecordBatchFileReader::Open(input, read_options));
-  reader->schema()->ToString();
+  auto rbr_result =
+      arrow::ipc::RecordBatchFileReader::Open(open_result.ValueUnsafe());
 
-  return arrow::Status::OK();
+  if (!rbr_result.ok()) {
+    return "Failed to RBR reader for file: " + filename + " with error " +
+           rbr_result.status().message();
+  }
+
+  auto ipc_reader = rbr_result.ValueUnsafe();
+
+  // Read a batch so we can print schema??
+  std::shared_ptr<arrow::RecordBatch> rbatch;
+  auto read_result = ipc_reader->ReadRecordBatch(0);
+
+  if (!read_result.ok()) {
+    return "Failed to read a single record batch from file: " + filename +
+           " with error " + read_result.status().message();
+  }
+
+  // WIP: Just return schema as string for now... In the future, return an
+  // object with more info about the file?
+  return read_result.ValueUnsafe()->schema()->ToString();
 }
 
-EMSCRIPTEN_KEEPALIVE
-int main() {
-  arrow::Status st = RunMain();
-
-  if (st.ok()) {
-    return 0;
-  } else {
-    return -1;
-  }
+EMSCRIPTEN_BINDINGS(my_module) {
+  emscripten::function("ProcessFile", &ProcessFile);
 }
